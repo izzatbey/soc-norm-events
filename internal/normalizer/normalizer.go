@@ -1,10 +1,10 @@
 package normalizer
 
 import (
+	"context"
 	"log"
 	"sync/atomic"
 	"time"
-	"context"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
@@ -86,7 +86,8 @@ func Run(cfg Config) error {
 			continue
 		}
 
-		normalized := ApplyStage1Rules(string(msg.Value))
+		stage1 := ApplyStage1Rules(string(msg.Value))
+		normalized := ApplyStage2Rules(stage1)
 
 		err = producer.Produce(&kafka.Message{
 			TopicPartition: kafka.TopicPartition{

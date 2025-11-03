@@ -1,0 +1,77 @@
+{
+	"@timestamp": "2025-11-03T14:35:17.096634483+07:00",
+	"agent": {
+		"id": "031",
+		"ip": "10.80.110.41",
+		"name": "dc_jenkins"
+	},
+	"cluster": {
+		"name": "wazuh-server-cluster",
+		"node": "wazuh-server-3"
+	},
+	"data": {
+		"eventdata": {
+			"currentDirectory": "/var/ossec",
+			"hashes": "SHA256=ec6d007d48ef11bc47ad3f372b4b20ff2f0d4e63867e7e4cc0f1b17b19fa88b2",
+			"logonGuid": "{b821ea8f-0000-0000-0000-000000000000}",
+			"logonId": "0",
+			"ruleName": "TechniqueID=T1059.004,TechniqueName=Command and Scripting Interpreter: Unix Shell",
+			"terminalSessionId": "4294967295"
+		},
+		"system": {
+			"channel": "Linux-Sysmon/Operational",
+			"computer": "jenkins",
+			"eventId": "1",
+			"level": "4",
+			"systemTime": "2025-11-03T07:35:15.730921000Z"
+		}
+	},
+	"decoder": {
+		"name": "sysmon-linux"
+	},
+	"full_log": "Nov  3 07:35:15 jenkins sysmon[761]: <Event><System><Provider Name=\"Linux-Sysmon\" Guid=\"{ff032593-a8d3-4f13-b0d6-01fc615a0f97}\"/><EventID>1</EventID><Version>5</Version><Level>4</Level><Task>1</Task><Opcode>0</Opcode><Keywords>0x8000000000000000</Keywords><TimeCreated SystemTime=\"2025-11-03T07:35:15.730921000Z\"/><EventRecordID>1621077</EventRecordID><Correlation/><Execution ProcessID=\"761\" ThreadID=\"761\"/><Channel>Linux-Sysmon/Operational</Channel><Computer>jenkins</Computer><Security UserId=\"0\"/></System><EventData><Data Name=\"RuleName\">TechniqueID=T1059.004,TechniqueName=Command and Scripting Interpreter: Unix Shell</Data><Data Name=\"UtcTime\">2025-11-03 14:35:15.159</Data><Data Name=\"ProcessGuid\">{b821ea8f-bda3-6908-4586-2bbf39560000}</Data><Data Name=\"ProcessId\">2770795</Data><Data Name=\"Image\">/usr/bin/bash</Data><Data Name=\"FileVersion\">-</Data><Data Name=\"Description\">-</Data><Data Name=\"Product\">-</Data><Data Name=\"Company\">-</Data><Data Name=\"OriginalFileName\">-</Data><Data Name=\"CommandLine\">sh -c last -n 20</Data><Data Name=\"CurrentDirectory\">/var/ossec</Data><Data Name=\"User\">root</Data><Data Name=\"LogonGuid\">{b821ea8f-0000-0000-0000-000000000000}</Data><Data Name=\"LogonId\">0</Data><Data Name=\"TerminalSessionId\">4294967295</Data><Data Name=\"IntegrityLevel\">no level</Data><Data Name=\"Hashes\">SHA256=ec6d007d48ef11bc47ad3f372b4b20ff2f0d4e63867e7e4cc0f1b17b19fa88b2</Data><Data Name=\"ParentProcessGuid\">{00000000-0000-0000-0000-000000000000}</Data><Data Name=\"ParentProcessId\">3975</Data><Data Name=\"ParentImage\">-</Data><Data Name=\"ParentCommandLine\">-</Data><Data Name=\"ParentUser\">-</Data></EventData></Event>",
+	"id": "1762155315.1293947768",
+	"location": "/var/log/messages",
+	"manager": {
+		"name": "wazuh-server-3"
+	},
+	"predecoder": {
+		"hostname": "jenkins",
+		"program_name": "sysmon",
+		"timestamp": "Nov  3 07:35:15"
+	},
+	"rule": {
+		"description": "Sysmon - Event 1: Process creation /usr/bin/bash",
+		"firedtimes": 342,
+		"groups": [
+			"linux",
+			"sysmon",
+			"sysmon_event1"
+		],
+		"id": "200151",
+		"level": 3,
+		"mail": false,
+		"mitre": {
+			"id": [
+				"T1204"
+			],
+			"tactic": [
+				"Execution"
+			],
+			"technique": [
+				"User Execution"
+			]
+		},
+		"severity": "low"
+	},
+	"timestamp": "2025-11-03T14:35:15.754+0700",
+	"process": {
+		"pid": "2770795",
+		"command_line": "sh -c last -n 20",
+		"user": "root",
+		"parent": {
+			"pid": "3975"
+		},
+		"name": "/usr/bin/bash"
+	}
+}
