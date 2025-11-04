@@ -87,7 +87,8 @@ func Run(cfg Config) error {
 		}
 
 		stage1 := ApplyStage1Rules(string(msg.Value))
-		normalized := ApplyStage2Rules(stage1)
+		stage2 := ApplyStage2Rules(stage1)
+		normalized := ApplyStage3Rules(stage2)
 
 		err = producer.Produce(&kafka.Message{
 			TopicPartition: kafka.TopicPartition{

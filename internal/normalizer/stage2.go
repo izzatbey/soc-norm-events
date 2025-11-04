@@ -7,7 +7,6 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-// ApplyStage2Rules applies Sysmon Linux normalization logic (multiple event types)
 func ApplyStage2Rules(raw string) string {
 	raw = Event1(raw)
 	raw = Event3(raw)
@@ -15,6 +14,7 @@ func ApplyStage2Rules(raw string) string {
 	raw = Event9(raw)
 	raw = Event11(raw)
 	raw = Event23(raw)
+	raw = extractMitreInfo(raw)
 	return raw
 }
 
@@ -56,7 +56,6 @@ func Event3(raw string) string {
 		}
 		raw = renameFields(raw, mapping)
 
-		// Direction determination
 		if strings.Contains(initiated, "true") {
 			raw, _ = sjson.Set(raw, "network.direction", "egress")
 		} else if strings.Contains(initiated, "false") {
@@ -141,6 +140,35 @@ func renameFields(raw string, mapping map[string]string) string {
 	return raw
 }
 
+func extractMitreInfo(raw string) string {
+	ruleName := gjson.Get(raw, "data.eventdata.ruleName").String()
+	if ruleName == "" || strings.EqualFold(ruleName, "-") {
+		return raw
+	}
+
+	var techniqueID, techniqueName string
+	parts := strings.Split(ruleName, ",")
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if strings.HasPrefix(p, "TechniqueID=") {
+			techniqueID = strings.TrimPrefix(p, "TechniqueID=")
+		} else if strings.HasPrefix(p, "TechniqueName=") {
+			techniqueName = strings.TrimPrefix(p, "TechniqueName=")
+		}
+	}
+
+	if techniqueID != "" {
+		raw, _ = sjson.Set(raw, "rule.mitre.id", techniqueID)
+	}
+	if techniqueName != "" {
+		raw, _ = sjson.Set(raw, "rule.mitre.technique", techniqueName)
+	}
+
+	// Clean the raw field after parsing
+	raw, _ = sjson.Delete(raw, "data.eventdata.ruleName")
+	return raw
+}
+
 func cleanSysmonFields(raw string) string {
 	dropList := []string{
 		"data.eventdata.company",
@@ -159,6 +187,7 @@ func cleanSysmonFields(raw string) string {
 		"data.system.threadID",
 		"data.system.version",
 		"time",
+		"data.system.systemTime",
 	}
 
 	for _, key := range dropList {
