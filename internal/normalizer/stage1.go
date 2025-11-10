@@ -9,6 +9,10 @@ import (
 
 func ApplyStage1Rules(raw string) string {
 	raw = applyHostnameRemapRules(raw)
+	programName := strings.ToLower(gjson.Get(raw, "predecoder.program_name").String())
+	if programName == "fluent-bit" {
+		return ""
+	}
 
 	decoder := gjson.Get(raw, "decoder.name").String()
 
@@ -23,12 +27,14 @@ func ApplyStage1Rules(raw string) string {
 
 func applyHostnameRemapRules(raw string) string {
 	hostnameMap := map[string]string{
-		"NTNX-":             "nutanix",
-		"vmware-esxi":       "vmware-esxi",
-		"2024":              "h3c",
-		"ESIGNISSUINGCA01":  "ejbca_ESIGNISSUINGCA01",
-		"node-OeLJPOttvU":   "ejbca_node-OeLJPOttvU",
-		"node-INWxaXczjk":   "ejbca_node-INWxaXczjk",
+		"NTNX-":            "nutanix",
+		"vmware-esxi":      "vmware-esxi",
+		"2024":             "h3c",
+		"ckr_jtp_01":       "hsm_dc",
+		"sby_jtp_01":       "hsm_drc",
+		"ESIGNISSUINGCA01": "ejbca_ESIGNISSUINGCA01",
+		"node-OeLJPOttvU":  "ejbca_node-OeLJPOttvU",
+		"node-INWxaXczjk":  "ejbca_node-INWxaXczjk",
 	}
 
 	candidates := []string{
@@ -76,10 +82,10 @@ func fortigateDirectionRule(raw string) string {
 
 func fortigateRemapRule(raw string) string {
 	mapping := map[string]string{
-		"data.devname":	   "agent.name",
+		"data.devname":    "agent.name",
 		"data.remip":      "source.ip",
 		"data.srcip":      "source.ip",
-		"data.srcport":	   "source.port",
+		"data.srcport":    "source.port",
 		"data.dstuser":    "destination.user",
 		"data.dstip":      "destination.ip",
 		"data.dstport":    "destination.port",
