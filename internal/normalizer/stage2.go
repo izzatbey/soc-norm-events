@@ -130,82 +130,72 @@ func Event23(raw string) string {
 	return cleanSysmonFields(raw)
 }
 
-func renameFields(raw string, mapping map[string]string) string {
-	for oldField, newField := range mapping {
-		if val := gjson.Get(raw, oldField); val.Exists() {
-			raw, _ = sjson.Set(raw, newField, val.Value())
-			raw, _ = sjson.Delete(raw, oldField)
-		}
-	}
-	return raw
-}
+// func extractMitreInfo(raw string) string {
+// 	ruleName := gjson.Get(raw, "data.eventdata.ruleName").String()
+// 	if ruleName == "" || strings.EqualFold(ruleName, "-") {
+// 		return raw
+// 	}
 
-func extractMitreInfo(raw string) string {
-	ruleName := gjson.Get(raw, "data.eventdata.ruleName").String()
-	if ruleName == "" || strings.EqualFold(ruleName, "-") {
-		return raw
-	}
+// 	var techniqueID, techniqueName string
+// 	parts := strings.Split(ruleName, ",")
+// 	for _, p := range parts {
+// 		p = strings.TrimSpace(p)
+// 		if strings.HasPrefix(p, "TechniqueID=") {
+// 			techniqueID = strings.TrimPrefix(p, "TechniqueID=")
+// 		} else if strings.HasPrefix(p, "TechniqueName=") {
+// 			techniqueName = strings.TrimPrefix(p, "TechniqueName=")
+// 		}
+// 	}
 
-	var techniqueID, techniqueName string
-	parts := strings.Split(ruleName, ",")
-	for _, p := range parts {
-		p = strings.TrimSpace(p)
-		if strings.HasPrefix(p, "TechniqueID=") {
-			techniqueID = strings.TrimPrefix(p, "TechniqueID=")
-		} else if strings.HasPrefix(p, "TechniqueName=") {
-			techniqueName = strings.TrimPrefix(p, "TechniqueName=")
-		}
-	}
+// 	if techniqueID != "" {
+// 		raw, _ = sjson.Set(raw, "rule.mitre.id", techniqueID)
+// 	}
+// 	if techniqueName != "" {
+// 		raw, _ = sjson.Set(raw, "rule.mitre.technique", techniqueName)
+// 	}
 
-	if techniqueID != "" {
-		raw, _ = sjson.Set(raw, "rule.mitre.id", techniqueID)
-	}
-	if techniqueName != "" {
-		raw, _ = sjson.Set(raw, "rule.mitre.technique", techniqueName)
-	}
+// 	// Clean the raw field after parsing
+// 	raw, _ = sjson.Delete(raw, "data.eventdata.ruleName")
+// 	return raw
+// }
 
-	// Clean the raw field after parsing
-	raw, _ = sjson.Delete(raw, "data.eventdata.ruleName")
-	return raw
-}
+// func cleanSysmonFields(raw string) string {
+// 	dropList := []string{
+// 		"data.eventdata.company",
+// 		"data.eventdata.description",
+// 		"data.eventdata.fileVersion",
+// 		"data.eventdata.product",
+// 		"data.eventdata.originalFileName",
+// 		"data.eventdata.integrityLevel",
+// 		"data.eventdata.parentProcessGuid",
+// 		"data.eventdata.processGuid",
+// 		"data.system.keywords",
+// 		"data.system.opcode",
+// 		"data.system.task",
+// 		"data.system.eventRecordID",
+// 		"data.system.processID",
+// 		"data.system.threadID",
+// 		"data.system.version",
+// 		"time",
+// 		"data.system.systemTime",
+// 	}
 
-func cleanSysmonFields(raw string) string {
-	dropList := []string{
-		"data.eventdata.company",
-		"data.eventdata.description",
-		"data.eventdata.fileVersion",
-		"data.eventdata.product",
-		"data.eventdata.originalFileName",
-		"data.eventdata.integrityLevel",
-		"data.eventdata.parentProcessGuid",
-		"data.eventdata.processGuid",
-		"data.system.keywords",
-		"data.system.opcode",
-		"data.system.task",
-		"data.system.eventRecordID",
-		"data.system.processID",
-		"data.system.threadID",
-		"data.system.version",
-		"time",
-		"data.system.systemTime",
-	}
+// 	for _, key := range dropList {
+// 		if gjson.Get(raw, key).Exists() {
+// 			raw, _ = sjson.Delete(raw, key)
+// 		}
+// 	}
 
-	for _, key := range dropList {
-		if gjson.Get(raw, key).Exists() {
-			raw, _ = sjson.Delete(raw, key)
-		}
-	}
-
-	for _, section := range []string{"data.eventdata", "data.system", "process", "process.parent", "file"} {
-		obj := gjson.Get(raw, section)
-		if obj.Exists() && obj.IsObject() {
-			for k, v := range obj.Map() {
-				strVal := strings.TrimSpace(v.String())
-				if strVal == "" || strVal == "-" || strings.EqualFold(strVal, "null") {
-					raw, _ = sjson.Delete(raw, section+"."+k)
-				}
-			}
-		}
-	}
-	return raw
-}
+// 	for _, section := range []string{"data.eventdata", "data.system", "process", "process.parent", "file"} {
+// 		obj := gjson.Get(raw, section)
+// 		if obj.Exists() && obj.IsObject() {
+// 			for k, v := range obj.Map() {
+// 				strVal := strings.TrimSpace(v.String())
+// 				if strVal == "" || strVal == "-" || strings.EqualFold(strVal, "null") {
+// 					raw, _ = sjson.Delete(raw, section+"."+k)
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return raw
+// }
