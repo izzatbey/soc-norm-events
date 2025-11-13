@@ -77,6 +77,7 @@ func fortigateRemap(raw string) string {
 		"data.dstcountry": "destination.geo.country_name",
 	}
 
+	raw = fortigateDirection(raw)
 	for old, new := range mapping {
 		if v := gjson.Get(raw, old); v.Exists() {
 			raw, _ = sjson.Set(raw, new, v.Value())
@@ -84,28 +85,5 @@ func fortigateRemap(raw string) string {
 		}
 	}
 
-	return raw
-}
-
-func fortigateCleanup(raw string) string {
-	removeFields := []string{
-		"data.devname", "predecoder.hostname",
-		"data.time", "time", "data.eventtime",
-	}
-	for _, f := range removeFields {
-		if gjson.Get(raw, f).Exists() {
-			raw, _ = sjson.Delete(raw, f)
-		}
-	}
-
-	data := gjson.Get(raw, "data")
-	if data.Exists() && data.IsObject() {
-		for k, v := range data.Map() {
-			if v.Type == gjson.String && strings.TrimSpace(v.String()) == "N/A" {
-				raw, _ = sjson.Delete(raw, "data."+k)
-			}
-		}
-	}
-
-	return raw
+	return cleanFields(raw)
 }
