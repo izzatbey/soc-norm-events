@@ -1,0 +1,54 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+*.test
+/bin/
+/build/
+/dist/
+
+# Go object files and archives
+*.o
+*.a
+
+# Coverage
+coverage.out
+*.coverprofile
+
+# Dependency/vendor (uncomment if you vendor dependencies)
+vendor/
+Godeps/
+Godeps/_workspace/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Editor backup/temp files
+*~
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*.local
+*.key
+*.pem
+id_rsa
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# Generated code (optional; keep if you want to ignore generated artifacts)
+*_generated.go
+*.pb.go

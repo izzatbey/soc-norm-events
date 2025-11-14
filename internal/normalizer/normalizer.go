@@ -8,16 +8,17 @@ import (
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/izzatbey/soc-norm-events/internal/config"
 )
 
-type Config struct {
-	Brokers     string
-	InputTopic  string
-	OutputTopic string
-	GroupID     string
-}
+// type Config struct {
+// 	Brokers     string
+// 	InputTopic  string
+// 	OutputTopic string
+// 	GroupID     string
+// }
 
-func Run(cfg Config) error {
+func Run(cfg *config.Config) error {
 	admin, err := kafka.NewAdminClient(&kafka.ConfigMap{"bootstrap.servers": cfg.Brokers})
 	if err == nil {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

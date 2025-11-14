@@ -1,0 +1,10 @@
+services:
+  normalizer:
+    container_name: soc-normalizer
+    build: .
+    restart: unless-stopped
+    # ports:
+    #   - "8081:8081"
+    env_file:
+      - .env
+
